@@ -1,32 +1,93 @@
 import "../index.css";
-import {initialCards} from './cards';
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector('#card-template').content;
+import { initialCards } from "./cards.js";
+import { createCard, handleLikeIcon, handleDeleteCard } from "./card.js";
+import { openModal, closeModal, closeModalEvtListeners } from "./modal.js";
 
-// @todo: DOM узлы
-const container = document.querySelector('.content');
-const cardsContainer = container.querySelector('.places__list');
+// DOM узлы
+const cardsContainer = document.querySelector(".places__list");
 
-// @todo: Функция создания карточки
-function createCard({name, link, deleteCard}) {
-    const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-    const cardImage = cardElement.querySelector('.card__image');
-    cardElement.querySelector('.card__title').textContent = name;
-    cardImage.src = link;
-    cardImage.alt = name;
+const profileEditButton = document.querySelector(".profile__edit-button");
+const cardAddButton = document.querySelector(".profile__add-button");
 
-    const deleteButton = cardElement.querySelector('.card__delete-button');
-    deleteButton.addEventListener('click', () => deleteCard(cardElement));
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
 
-    return cardElement;
-  };
+const profileModal = document.querySelector(".popup_type_edit");
+const profileForm = profileModal.querySelector(".popup__form");
+const nameInput = profileForm.querySelector(".popup__input_type_name");
+const jobInput = profileForm.querySelector(".popup__input_type_description");
 
-// @todo: Функция удаления карточки
-const deleteCard = (element) => element.remove();
+const newCardModal = document.querySelector(".popup_type_new-card");
+const newCardForm = newCardModal.querySelector(".popup__form");
+const newCardName = newCardForm.querySelector(".popup__input_type_card-name");
+const newCardLink = newCardForm.querySelector(".popup__input_type_url");
 
-// @todo: Вывести карточки на страницу
-initialCards.forEach(({name, link}) =>
-    cardsContainer.append(createCard({name, link, deleteCard}))
-);
+const imageModal = document.querySelector(".popup_type_image");
+const imageElement = imageModal.querySelector(".popup__image");
+const imageCaption = imageModal.querySelector(".popup__caption");
+
+function handleOpenCard({ name, link }) {
+  imageElement.src = link;
+  imageElement.alt = `Изображение ${name}`;
+  imageCaption.textContent = name;
+  openModal(imageModal);
+};
+
+function handleProfileFormSubmit (evt) {
+  evt.preventDefault();
+  profileTitle.textContent = nameInput.value;
+  profileDescription.textContent = jobInput.value;
+  closeModal(profileModal);
+};
+
+function handleNewCardFormSubmit (evt) {
+  evt.preventDefault();
+  cardsContainer.prepend(
+    createCard(
+      {
+        name: newCardName.value,
+        link: newCardLink.value,
+      },
+      {
+        openImage: handleOpenCard,
+        likeCard: handleLikeIcon,
+        deleteCard: handleDeleteCard,
+      }
+    )
+  );
+
+  closeModal(newCardModal);
+  newCardForm.reset();
+};
+
+// Обработчики событий
+profileForm.addEventListener("submit", handleProfileFormSubmit);
+newCardForm.addEventListener("submit", handleNewCardFormSubmit);
+
+profileEditButton.addEventListener("click", () => {
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+  openModal(profileModal);
+});
+
+cardAddButton.addEventListener("click", () => {
+  openModal(newCardModal);
+});
+
+// Вывести карточки на страницу
+initialCards.forEach((item) => {
+  cardsContainer.append(
+    createCard(item, {
+      openImage: handleOpenCard,
+      likeCard: handleLikeIcon,
+      deleteCard: handleDeleteCard,
+    })
+  );
+});
+
+//настраиваем обработчики закрытия попапов
+closeModalEvtListeners(profileModal);
+closeModalEvtListeners(newCardModal);
+closeModalEvtListeners(imageModal);
 
 //Спасибо за проверку моей работы!=)
