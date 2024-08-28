@@ -1,7 +1,7 @@
 import "../index.css";
 import { createCard } from "./card.js";
 import { openModal, closeModal, closeModalEvtListeners } from "./modal.js";
-import { validationSet, enableValidation, clearValidation } from "./validation.js"
+import { enableValidation, clearValidation } from "./validation.js"
 import { getUserData, getInitialCards, editUserData, addNewCard, editAvatar } from "./api.js"
 
 // DOM узлы
@@ -31,6 +31,15 @@ const newCardLink = newCardForm.querySelector(".popup__input_type_url");
 const imageModal = document.querySelector(".popup_type_image");
 const imageElement = imageModal.querySelector(".popup__image");
 const imageCaption = imageModal.querySelector(".popup__caption");
+
+export const validationSet = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible"
+}; 
 
 enableValidation(validationSet);
 
@@ -83,7 +92,7 @@ function handleNewCardFormSubmit (evt) {
   renderLoading(true, evt.submitter);
   addNewCard(newCardName.value, newCardLink.value)
     .then((res) => {
-      const card = createCard(res, res._id, openImage);
+      const card = createCard(res, res.owner._id, openImage);
       cardsContainer.prepend(card);
 
       closeModal(newCardModal);
@@ -165,4 +174,4 @@ Promise.all([getUserData(), getInitialCards()])
 
 
 
-//Спасибо за проверку моей работы!=)
+//Спасибо за проверку моей работы, ценные комментарии, о некоторых возможностях не знала! Спасибо еще раз!!!=)

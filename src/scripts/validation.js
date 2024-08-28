@@ -1,11 +1,3 @@
-export const validationSet = {
-    formSelector: ".popup__form",
-    inputSelector: ".popup__input",
-    submitButtonSelector: ".popup__button",
-    inactiveButtonClass: "popup__button_disabled",
-    inputErrorClass: "popup__input_type_error",
-    errorClass: "popup__error_visible"
-  }; 
 
 //Функция, которая показывает ошибку
 const showInputError = (formElement, inputElement, errorMessage, validationSet) => {
@@ -21,6 +13,7 @@ const hideInputError = (formElement, inputElement, validationSet) => {
     inputElement.classList.remove(validationSet.inputErrorClass);
     errorElement.classList.remove(validationSet.errorClass);
     errorElement.textContent = "";
+    inputElement.setCustomValidity("");
 };
 
 //Функция, которая проверяет наличие ошибки
